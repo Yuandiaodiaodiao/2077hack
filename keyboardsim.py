@@ -16,4 +16,27 @@ def press(key,cooldown=keycooldown):
     time.sleep(cooldown)
 
 if __name__=="__main__":
-    press(DOWN)
+    # press(DOWN)
+    # time.sleep(1)
+    # press(72)
+    # import pyautogui
+    #
+    # pyautogui.moveTo(x=100, y=100, duration=2, tween=pyautogui.linear)
+    # pyautogui.press('esc')
+    from pydamo_0 import Time, DM, Mouse, Key, vk
+
+    dm = DM()
+    # dm.reg_infos.unreg_dm()
+    # dm.dm.SetSimMode(ord('1'))
+    ms = Mouse(dm)
+    kk = Key(dm)
+    import win32gui
+    # hwnd = win32gui.FindWindow(None, r'Cyberpunk 2077 (C) 2020 by CD Projekt RED')
+    # print(hwnd)
+    # dm.BindWindow(hwnd,"normal","normal","normal",0)
+
+    tt = Time()
+    tt.sleep(1)
+    kk.down(vk.enter)  # 按下a键
+    tt.sleep(0.25)
+    kk.up(vk.enter)
