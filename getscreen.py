@@ -134,7 +134,7 @@ if __name__ == "__main__":
     code_matrix = []
     for line in res:
         line_matrix = []
-        for i in range(0, len(res)*2, 2):
+        for i in range(0, len(res) * 2, 2):
             line_matrix.append(line[i] + line[i + 1])
         code_matrix.append(line_matrix)
     print(code_matrix)
@@ -154,11 +154,13 @@ if __name__ == "__main__":
 
     plt.show()
 
-    ansused=None
+    ansused = None
+
+
     def dfs(needed_index, status, lineid, used, selected, deep):
         global ansused
         if needed_index >= len(code_needed):
-            ansused=used
+            ansused = used
             return True
         if deep >= 4:
             return False
@@ -206,14 +208,18 @@ if __name__ == "__main__":
                 if res == True:
                     return True
         return False
-    res=dfs(0,0,0,id_use,False,0)
+
+
+    res = dfs(0, 0, 0, id_use, False, 0)
     print(res)
     print(ansused)
 
-    op=[]
-    fulldeep=np.sum(ansused)
-    def searchop(status,lineid,deep,used):
-        if deep>=fulldeep:
+    op = []
+    fulldeep = np.sum(ansused)
+
+
+    def searchop(status, lineid, deep, used):
+        if deep >= fulldeep:
             return True
         if status == 0:
             line = used[lineid]
@@ -228,21 +234,69 @@ if __name__ == "__main__":
                 usedc[index][lineid] = 0
             return usedc
 
-        for index,item in enumerate(line):
-            if item==1:
-                unused=clearused(index)
-                if status==0:
-                    op.append((lineid,index))
+        for index, item in enumerate(line):
+            if item == 1:
+                unused = clearused(index)
+                if status == 0:
+                    op.append((lineid, index))
                 else:
-                    op.append((index,lineid))
-                res=searchop(status^1,index,deep+1,unused)
+                    op.append((index, lineid))
+                res = searchop(status ^ 1, index, deep + 1, unused)
 
                 if res:
                     return True
                 op.pop()
 
 
-    ans=searchop(0,0,0,ansused)
+    ans = searchop(0, 0, 0, ansused)
     print(ans)
     print(op)
-    mousex,mousey=0,0
+    mousex, mousey = 0, 0
+    status = 0
+    keyop = []
+
+
+    def deltapress(delta, ops):
+        opx = ['a', 'd', 'w', 's']
+        opxx = opx[ops:ops + 2]
+        if delta > 0:
+            for i in range(delta):
+                keyop.append(opxx[1])
+        elif delta < 0:
+            for i in range(delta):
+                keyop.append(opxx[0])
+
+
+    for index, item in enumerate(op):
+        if index == 0:
+            # 第一行特殊处理
+            keyop.append("d")
+            y = item[1]
+            delta = y - 1
+            deltapress(delta, 0)
+        else:
+            if status == 0:
+                now = item[1]
+                last = op[index - 1][1]
+            else:
+                now = item[0]
+                last = op[index - 1][0]
+            delta = now - last
+            deltapress(delta, status)
+        status = status ^ 1
+        keyop.append('enter')
+
+    print(keyop)
+    import keyboardsim
+    keybind={
+        "w":keyboardsim.UP,
+        "a":keyboardsim.LEFT,
+        "s":keyboardsim.DOWN,
+        "d":keyboardsim.RIGHT,
+        'enter':keyboardsim.ENTER
+    }
+    key_opcode=list(map(lambda x:keybind[x],keyop))
+    print(key_opcode)
+    for i in key_opcode:
+        keyboardsim.press(i)
+        time.sleep(0.1)
